@@ -29,7 +29,7 @@
         <h2>{{ room.number }} - {{ room.category.title }}</h2>
         <p>Місць: {{ room.capacity }}</p>
         <p>Ціна: {{ room.price }} грн</p>
-        <a href="{% url 'booking_create' room.id %}">Забронювати</a>
+        <a href="#">Забронювати</a>
         <hr>
     {% endfor%}
 {% else %}
@@ -37,6 +37,6 @@
 {% endif %}
 
 {% if user.is_authenticated %}
-    <p><a href="{% url 'my_bookings' %}">Мої бронювання</a></p>
+    <p><a href="#">Мої бронювання</a></p>
 {% endif %}
 {% endblock %}
