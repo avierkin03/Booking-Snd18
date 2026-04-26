@@ -1,12 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Наші кімнати</h1>
-{% for room in rooms %}
-    <img src="{{ room.image.url }}">
-    <h2>{{ room.number }} - {{ room.category.title }}</h2>
-    <p>Місць: {{ room.capacity }}</p>
-    <p>Ціна: {{ room.price }} грн</p>
-    <p><a href="#">Забронювати</a></p>
-    <hr>
-{% endfor%}
+
+<form method="get" action="{% url 'rooms' %}">
+    <label for="category">Категорія: </label>
+    <select name = "category" id = "category">
+        <option value="">- Всі -</option>
+        {% for cat in category %}
+            <option value = "{{ cat.id}}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>
+                {{ cat.title }}
+            </option>
+        {% endfor %}
+    </select>
+    <label for = "capacity">Мінімум місць:</label>
+    <input type = "number" name = "capacity" id = "capacity" min = "1" value = "{{ selected_capacity|default:''}}">
+
+    <label for = "price_max">Максимальна ціна:</label>
+    <input type = "number" name = "price_max" id = "price_max" min = "0" value = "{{ selected_price_max|default:''}}">
+    <button type = "submit">Фільтрувати</button>
+    <a href="{% url 'rooms' %}">Скинути</a>
+</form>
+
+{% if rooms %}
+    {% for room in rooms %}
+        {% if room.image %}
+            <img src="{{ room.image.url }}" alt = "Кімната {{ room.number}}" width = "300">
+        {% endif %}
+        <h2>{{ room.number }} - {{ room.category.title }}</h2>
+        <p>Місць: {{ room.capacity }}</p>
+        <p>Ціна: {{ room.price }} грн</p>
+        <a href="{% url 'booking_create' room.id %}">Забронювати</a>
+        <hr>
+    {% endfor%}
+{% else %}
+    <p>За вашим запитом кімнат не знайдено.</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    <p><a href="{% url 'my_bookings' %}">Мої бронювання</a></p>
+{% endif %}
 {% endblock %}

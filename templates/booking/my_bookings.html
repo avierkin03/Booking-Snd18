@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Мої бронювання</h1>
+{% if messages %}
+    {% for message in messages %}
+    <p><strong>{{ message }}</strong></p>
+    {% endfor%}
+{% endif %}
+
+{% if bookings %}
+    {% for booking in bookings %}
+        <div>
+            <h3>Кімната №{{ booking.strat_data }} - {{ booking.room.category.title }}</h3>
+        <p>Заїзд: {{ booking.start_data }}</p>
+        <p>Виїзд: {{ booking.end_data }}</p>
+        <p>Місць: {{ booking.room.capacity }}</p>
+        <p>Ціна: {{ booking.room.price }} грн/ніч</p>
+        <p>Заброньовано: {{ booking.created_at }}</p>
+        {% if booking.start_date > today %}
+            <form method="post" action="{% url 'booking_cancel' booking.id %}">
+                {% csrf_token %}
+                <button type = "submit" onclick="return confirm('Скасувати це бронювання?')">
+                    Скасувати
+                </button>
+            </form>
+        {% else %}
+            <p><em>Скасування недоступне</em></p>
+        {% endif %}
+        </div>
+        <hr>
+    {% endfor %}
+{% else %}
+    <p>У вас поки немає бронювань.</p>
+{% endif %}
+
+<a href = "{% url 'rooms' %}">До списку кімнат</a>
+{% endblock %}
