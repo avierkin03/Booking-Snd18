@@ -8,7 +8,7 @@
 
 <p>Категорія: {{ room.category.title }}</p>
 <p>Місць: {{ room.capacity }}</p>
-<p>Ціна: {{ room.capacity }} грн/ніч</p>
+<p>Ціна: {{ room.price }} грн/ніч</p>
 
 <hr>
 {% if messages %}
@@ -20,10 +20,10 @@
 <form method="post">
     {% csrf_token %}
     <label for = "start_date">Дата заїзду:</label>
-    <input type ="data" name="start_data" id = "start_data" required>
+    <input type ="date" name="start_date" id = "start_date" required>
     <br><br>
     <label for = "end_date">Дата виїзду:</label>
-    <input type ="data" name="end_date" id = "end_date" required>
+    <input type ="date" name="end_date" id = "end_date" required>
     <br><br>
     <button type = "submit">Підтвердити бронювання</button>
     <a href="{% url 'rooms' %}">Скасувати</a>

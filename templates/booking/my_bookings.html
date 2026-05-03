@@ -11,8 +11,8 @@
     {% for booking in bookings %}
         <div>
             <h3>Кімната №{{ booking.strat_data }} - {{ booking.room.category.title }}</h3>
-        <p>Заїзд: {{ booking.start_data }}</p>
-        <p>Виїзд: {{ booking.end_data }}</p>
+        <p>Заїзд: {{ booking.start_date }}</p>
+        <p>Виїзд: {{ booking.end_date }}</p>
         <p>Місць: {{ booking.room.capacity }}</p>
         <p>Ціна: {{ booking.room.price }} грн/ніч</p>
         <p>Заброньовано: {{ booking.created_at }}</p>

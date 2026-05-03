@@ -25,3 +25,34 @@ def room_list(request):
         "selected_category": category_id
     }
     return render(request=request, template_name="booking/room_list.html", context=context)
+
+
+# функція представлення бронювання кімнати
+def book_room(request, room_id):
+    if request.method == "GET":
+        room = Room.objects.get(pk=room_id)
+        context = {
+            "room": room
+        }
+        return render(request=request, template_name="booking/booking_form.html", context=context)
+    
+    elif request.method == "POST":
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+
+        user = request.user
+        room = Room.objects.get(pk=room_id)
+
+        # TODO додати превірку коректності дат + перевірку чи зайнята кімната на ці дати
+        # створюємо бронювання
+        Booking.objects.create(
+            user = user,
+            room = room,
+            start_date = start_date,
+            end_date = end_date
+        )
+        context = {
+            "bookings": Booking.objects.filter(user=user)
+        }
+        return render(request=request, template_name="booking/my_bookings.html", context=context)
+
