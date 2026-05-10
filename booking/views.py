@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Room, Category, Booking
+from datetime import datetime
 
 # функція представлення списку всіх кімнат
 def room_list(request):
@@ -29,21 +30,29 @@ def room_list(request):
 
 # функція представлення бронювання кімнати
 def book_room(request, room_id):
+    room = Room.objects.get(pk=room_id)
+    context = {
+        "room": room
+    }
+    
     if request.method == "GET":
-        room = Room.objects.get(pk=room_id)
-        context = {
-            "room": room
-        }
         return render(request=request, template_name="booking/booking_form.html", context=context)
     
     elif request.method == "POST":
-        start_date = request.POST.get("start_date")
-        end_date = request.POST.get("end_date")
+        start_date = datetime.strptime(request.POST.get("start_date"), "%Y-%m-%d").date()
+        end_date = datetime.strptime(request.POST.get("end_date"), "%Y-%m-%d").date()
 
         user = request.user
         room = Room.objects.get(pk=room_id)
 
-        # TODO додати превірку коректності дат + перевірку чи зайнята кімната на ці дати
+        # перевірка коректності дат
+        if end_date <= start_date or start_date < datetime.now().date():
+            return render(request=request, template_name="booking/booking_form.html", context=context)
+
+        # перевірка чи номер вже зайнятий на дати, які вибрав користувач
+        if Booking.objects.filter(room=room, start_date__lt=end_date, end_date__gt=start_date).exists():
+            return render(request=request, template_name="booking/booking_form.html", context=context)
+
         # створюємо бронювання
         Booking.objects.create(
             user = user,
@@ -52,7 +61,14 @@ def book_room(request, room_id):
             end_date = end_date
         )
         context = {
-            "bookings": Booking.objects.filter(user=user)
+            "bookings": Booking.objects.filter(user=user).order_by('-start_date')
         }
         return render(request=request, template_name="booking/my_bookings.html", context=context)
 
+
+# функція представлення сторінки історії бронювань користувача
+def user_bookings(request):
+    context = {
+        "bookings": Booking.objects.filter(user=request.user).order_by('-start_date')
+    }
+    return render(request=request, template_name="booking/my_bookings.html", context=context)
