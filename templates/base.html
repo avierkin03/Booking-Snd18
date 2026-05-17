@@ -21,9 +21,9 @@
                 {% endif %}
                 <li>
                     {% if user.is_authenticated %}
-                        <a href="#">Вийти</a>
+                        <a href="{% url 'logout' %}">Вийти</a>
                     {% else %}
-                        <a href="#">Увійти</a>
+                        <a href="{% url 'login' %}">Увійти</a>
                     {% endif %}
                 </li>
             </ul>
